@@ -20,21 +20,23 @@ export interface RendererResult {
   tree: RendererToken[];
   tokens: ExtendedToken[];
   error: Error | null;
+  mdInstance: MarkdownIt;
 }
 
 export const getCompontentTree = (initialMarkdown: string): RendererResult => {
-  try {
-    const markdownParser = MarkdownIt({
-      breaks: true,
-      html: true,
-    }).use(katex);
+  const markdownParser = MarkdownIt({
+    breaks: true,
+    html: true,
+  }).use(katex);
 
+  try {
     const tokens = markdownParser.parse(initialMarkdown, {});
 
     return {
       tree: tokensToCompontentTree(tokens),
       tokens: tokens,
       error: null,
+      mdInstance: markdownParser,
     };
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -42,6 +44,7 @@ export const getCompontentTree = (initialMarkdown: string): RendererResult => {
       tree: [],
       tokens: [],
       error: new Error(`解析 Markdown 失败: ${errorMessage}`),
+      mdInstance: markdownParser,
     };
   }
 };
@@ -123,6 +126,15 @@ function setNodeTemplateType(node: RendererToken) {
     // 代码块特殊处理（如 fence:js、fence:html）
     if (node.type === 'fence') {
       node.ComponentType = `fence:${node.info}`;
+    }
+
+    // 识别行内公式 Token
+    if (node.type === 'math_inline') {
+      node.ComponentType = 'math_inline'; // 行内公式类型
+    }
+    // 块级公式（可选，用 $$...$$ 包裹）
+    if (node.type === 'math_block') {
+      node.ComponentType = 'math_block'; // 块级公式类型
     }
   }
 }

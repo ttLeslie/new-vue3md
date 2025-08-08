@@ -1,10 +1,15 @@
 import { h, defineComponent, type PropType, type VNode } from 'vue';
 import type { RendererToken, ExtendedToken } from '../utils';
 import hljs from 'highlight.js';
+import MarkdownIt from 'markdown-it';
 import { katex } from '@mdit/plugin-katex';
 
 // 直接创建Vue的VNode
-const createVNode = (node: RendererToken, index: number): VNode | string | null => {
+const createVNode = (
+  node: RendererToken,
+  index: number,
+  mdInstance: MarkdownIt,
+): VNode | string | null => {
   const { ComponentType } = node;
 
   // 文本节点
@@ -20,7 +25,7 @@ const createVNode = (node: RendererToken, index: number): VNode | string | null 
   // 内联节点
   if (ComponentType === 'inline') {
     const children = (node as any).children
-      .map((child: RendererToken, i: number) => createVNode(child, i))
+      .map((child: RendererToken, i: number) => createVNode(child, i, mdInstance))
       .filter(Boolean);
 
     return h('div', { key: index }, children);
@@ -52,6 +57,20 @@ const createVNode = (node: RendererToken, index: number): VNode | string | null 
       class: 'code-inline', // 用于样式化的类名
       // 转义内容以确保特殊字符正确显示
       innerHTML: escapeHtml(content),
+    });
+  }
+
+  if (ComponentType === 'math_inline') {
+    const formula = (node as ExtendedToken).content || '';
+    // 使用 KaTeX 渲染公式为 HTML
+    const html = mdInstance.render(formula);
+
+    console.log(formula, html);
+
+    return h('span', {
+      key: index,
+      class: 'math-inline', // 行内公式样式类
+      innerHTML: html, // 插入渲染后的公式 HTML
     });
   }
 
@@ -97,7 +116,7 @@ const createVNode = (node: RendererToken, index: number): VNode | string | null 
 
     // 处理子节点
     const childNodes = children
-      .map((child: RendererToken, i: number) => createVNode(child, i))
+      .map((child: RendererToken, i: number) => createVNode(child, i, mdInstance))
       .filter(Boolean);
 
     // 构建基础属性
@@ -221,12 +240,16 @@ const MarkdownRenderer = defineComponent({
       type: Array as PropType<RendererToken[]>,
       default: () => [],
     },
+    mdInstance: {
+      type: Object as PropType<MarkdownIt>,
+      default: () => null,
+    },
   },
   setup(props) {
     // 主渲染函数 - 直接生成VNode
     return (): VNode => {
       const vNodes = props.tokenTree
-        .map((node, index) => createVNode(node, index))
+        .map((node, index) => createVNode(node, index, props.mdInstance))
         .filter(Boolean) as (VNode | string)[];
 
       return h('div', { class: 'markdown-renderer' }, vNodes);

@@ -61,12 +61,12 @@ $e^{i\\pi} + 1 = 0$
 
 `;
 
-const { tree, tokens, error } = getCompontentTree(content);
-console.log(tree);
+const { tree, tokens, error, mdInstance } = getCompontentTree(content);
+console.log(tree, tokens, mdInstance);
 
 const tokenTree = ref(tree);
 </script>
 <template>
-  <div><MarkdownRenderer :tokenTree="tokenTree" /></div>
+  <div><MarkdownRenderer :tokenTree="tokenTree" :mdInstance="mdInstance" /></div>
 </template>
 <style scoped></style>
