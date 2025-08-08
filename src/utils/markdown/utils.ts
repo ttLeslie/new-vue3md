@@ -1,7 +1,6 @@
 import type { Token } from 'markdown-it';
 import MarkdownIt from 'markdown-it';
-
-export const TEMPLATE_TYPE = {} as const;
+import { katex } from '@mdit/plugin-katex';
 
 export interface ExtendedToken extends Token {
   ComponentType?: string;
@@ -28,7 +27,7 @@ export const getCompontentTree = (initialMarkdown: string): RendererResult => {
     const markdownParser = MarkdownIt({
       breaks: true,
       html: true,
-    });
+    }).use(katex);
 
     const tokens = markdownParser.parse(initialMarkdown, {});
 
