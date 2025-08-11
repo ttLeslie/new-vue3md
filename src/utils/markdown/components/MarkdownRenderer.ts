@@ -4,6 +4,8 @@ import hljs from 'highlight.js';
 import MarkdownIt from 'markdown-it';
 import { katex } from '@mdit/plugin-katex';
 
+const markdownParser = MarkdownIt({}).use(katex);
+
 // 直接创建Vue的VNode
 const createVNode = (
   node: RendererToken,
@@ -63,9 +65,11 @@ const createVNode = (
   if (ComponentType === 'math_inline') {
     const formula = (node as ExtendedToken).content || '';
     // 使用 KaTeX 渲染公式为 HTML
-    const html = mdInstance.render(formula);
+    const html = markdownParser.render(
+      `${(node as ExtendedToken).markup}${formula}${(node as ExtendedToken).markup}`,
+    );
 
-    console.log(formula, html);
+    console.log(`${(node as ExtendedToken).markup}${formula}${(node as ExtendedToken).markup}`);
 
     return h('span', {
       key: index,
