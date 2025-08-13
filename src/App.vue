@@ -140,17 +140,10 @@ onMounted(() => {
   <div class="container">
     <!-- 控制按钮 -->
     <div class="controls">
-      <button
-        @click="startTyping"
-        :disabled="isTyping"
-        class="control-btn start-btn"
-      >
+      <button @click="startTyping" :disabled="isTyping" class="control-btn start-btn">
         <i class="fas fa-play"></i> {{ isTyping ? '正在打字...' : '开始打字' }}
       </button>
-      <button
-        @click="restartTyping"
-        class="control-btn restart-btn"
-      >
+      <button @click="restartTyping" class="control-btn restart-btn">
         <i class="fas fa-redo"></i> 重新开始
       </button>
     </div>
@@ -158,6 +151,7 @@ onMounted(() => {
     <!-- Markdown内容渲染 -->
     <div class="markdown-content">
       <renderMarkdown :content="content">
+        
         <template #javascript="{ lang, rawCode }">
           <div class="custom-js-code">
             <pre class="code-content" v-html="setCodeStyle(rawCode, lang)"></pre>
@@ -203,7 +197,7 @@ onMounted(() => {
 }
 
 .start-btn {
-  background-color: #4CAF50;
+  background-color: #4caf50;
   color: white;
 }
 
@@ -213,7 +207,7 @@ onMounted(() => {
 }
 
 .restart-btn {
-  background-color: #2196F3;
+  background-color: #2196f3;
   color: white;
 }
 

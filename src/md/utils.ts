@@ -1,6 +1,7 @@
 // src/utils.ts
 import type { ExtendedToken, TagToken, FenceInfo } from './types'; // 导入所需类型
 import type { VNode } from 'vue';
+import { escape, unescape } from 'es-toolkit/string';
 /**
  * 通用属性获取函数
  * @param node 节点对象
@@ -37,21 +38,11 @@ export const getAAttr = (node: TagToken, attrName: string) => {
 };
 
 export const escapeHtml = (str: string): string => {
-  return str
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#039;');
+  return escape(str);
 };
 
 export const unescapeHtml = (str: string): string => {
-  return str
-    .replace(/&amp;/g, '&')
-    .replace(/&lt;/g, '<')
-    .replace(/&gt;/g, '>')
-    .replace(/&quot;/g, '"')
-    .replace(/&#039;/g, "'");
+  return unescape(str);
 };
 
 export const isFenceNode = (vnode: VNode): boolean => {

@@ -23,6 +23,7 @@
   },
   "dependencies": {
     "echarts": "^6.0.0",
+    "es-toolkit": "^1.39.9",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "markdown-it-emoji": "^3.0.0",
