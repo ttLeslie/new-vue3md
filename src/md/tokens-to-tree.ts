@@ -1,51 +1,17 @@
-import type { Token } from 'markdown-it';
 import MarkdownIt from 'markdown-it';
-import { katex } from '@mdit/plugin-katex';
+import type { ExtendedToken, TagToken, RendererToken } from './types';
 
-export interface ExtendedToken extends Token {
-  ComponentType?: string;
-}
-
-export interface TagToken {
-  tag: string;
-  open: ExtendedToken;
-  close?: ExtendedToken;
-  children: RendererToken[];
-  ComponentType: string;
-}
-
-export type RendererToken = ExtendedToken | TagToken;
-
-export interface RendererResult {
-  tree: RendererToken[];
-  tokens: ExtendedToken[];
-  error: Error | null;
-  mdInstance: MarkdownIt;
-}
-
-export const getCompontentTree = (initialMarkdown: string): RendererResult => {
-  const markdownParser = MarkdownIt({
-    breaks: true,
-    html: true,
-  }).use(katex);
-
+export const getCompontentTree = (
+  initialMarkdown: string,
+  markdownParser: MarkdownIt,
+): RendererToken[] => {
   try {
     const tokens = markdownParser.parse(initialMarkdown, {});
 
-    return {
-      tree: tokensToCompontentTree(tokens),
-      tokens: tokens,
-      error: null,
-      mdInstance: markdownParser,
-    };
+    return tokensToCompontentTree(tokens);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    return {
-      tree: [],
-      tokens: [],
-      error: new Error(`解析 Markdown 失败: ${errorMessage}`),
-      mdInstance: markdownParser,
-    };
+    return [];
   }
 };
 
@@ -113,7 +79,7 @@ export function tokensToCompontentTree(
 }
 
 function isExtendedToken(node: RendererToken): node is ExtendedToken {
-  return 'type' in node; // Token 有 type 属性，CompontentToken 没有
+  return 'type' in node;
 }
 
 function setNodeTemplateType(node: RendererToken) {
@@ -127,22 +93,13 @@ function setNodeTemplateType(node: RendererToken) {
     if (node.type === 'fence') {
       node.ComponentType = `fence:${node.info}`;
     }
-
-    // 识别行内公式 Token
-    if (node.type === 'math_inline') {
-      node.ComponentType = 'math_inline'; // 行内公式类型
-    }
-    // 块级公式（可选，用 $$...$$ 包裹）
-    if (node.type === 'math_block') {
-      node.ComponentType = 'math_block'; // 块级公式类型
-    }
   }
 }
 
 function createBlockToken(token: ExtendedToken): TagToken {
   try {
     const block: TagToken = {
-      ComponentType: 'default', // 默认类型
+      ComponentType: 'default', // 默认类型，有具体的tag
       tag: token.tag,
       open: token,
       close: undefined, // 初始化为 undefined，闭合时赋值
