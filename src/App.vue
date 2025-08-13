@@ -1,8 +1,9 @@
 <script setup lang="ts">
 import hljs from 'highlight.js';
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted } from 'vue';
+import { SUPPORTED_LANGUAGES } from './md/utils';
 import renderMarkdown from './md/index';
-import Mermaid from './Mermaid.vue';
+import Mermaid from './Mermaids.vue';
 import ECharts from './ECharts.vue';
 
 // 原始完整内容
@@ -126,8 +127,15 @@ const restartTyping = () => {
 
 // 代码样式处理
 const setCodeStyle = (rawCode: string, lang: string) => {
+  // 检查是否为特殊处理的语言
   if (['mermaid', 'echarts'].includes(lang)) return rawCode;
-  return hljs.highlight(rawCode, { language: lang }).value;
+  // 检查是否为支持的语言，否则使用plaintext
+  const language = SUPPORTED_LANGUAGES.includes(lang) ? lang : 'plaintext';
+  try {
+    return hljs.highlight(rawCode, { language }).value;
+  } catch (e) {
+    return hljs.highlight(rawCode, { language: 'plaintext' }).value;
+  }
 };
 
 // 初始显示全部内容
@@ -151,7 +159,6 @@ onMounted(() => {
     <!-- Markdown内容渲染 -->
     <div class="markdown-content">
       <renderMarkdown :content="content">
-        
         <template #javascript="{ lang, rawCode }">
           <div class="custom-js-code">
             <pre class="code-content" v-html="setCodeStyle(rawCode, lang)"></pre>

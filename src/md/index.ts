@@ -40,20 +40,9 @@ const MarkdownRenderer = defineComponent({
       const mdIt = props.mdIt || getMarkdownItInstance({ breaks: props.breaks, html: props.html });
       const tree = getCompontentTree(props.content, mdIt);
 
-      let vNodeCachesList: any[] = [];
-      let vNodes;
-      if (vNodeCachesList.length < 2) {
-        vNodes = tree.map((node, index) => {
-          return getSlotCodeVnode(createVNode(node, index, mdIt), slots);
-        });
-        vNodeCachesList = [vNodes];
-      } else {
-        vNodes = [...vNodeCachesList];
-        const lastTree = tree[tree.length - 1];
-        const lastVNode = getSlotCodeVnode(createVNode(lastTree, tree.length - 1, mdIt), slots);
-        vNodes[tree.length - 1] = lastVNode;
-        vNodeCachesList = vNodes.slice(0, tree.length);
-      }
+      const vNodes = tree.map((node, index) => {
+        return getSlotCodeVnode(createVNode(node, index, mdIt), slots);
+      });
 
       return h(
         'div',

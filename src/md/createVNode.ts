@@ -25,7 +25,6 @@ const handleFenceNode = (node: RendererToken, index: number, ComponentType: stri
     {
       key: index,
       class: `markdown-code-block language-${lang}`, // 方便全局样式控制
-      // 存储核心信息（供插槽消费）
       'data-lang': lang,
       'data-raw-code': escapedCode,
     },
@@ -58,7 +57,7 @@ export default function createVNode(
       return h('br', { key: index });
 
     case 'inline': {
-      const children = processChildren((node as any).children, mdIt);
+      const children = processChildren((node as TagToken).children, mdIt);
       return h(Fragment, { key: index }, children);
     }
 
