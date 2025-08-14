@@ -3,7 +3,7 @@ import hljs from 'highlight.js';
 import { ref, onMounted } from 'vue';
 import { SUPPORTED_LANGUAGES } from './md/utils';
 import renderMarkdown from './md/index';
-import Mermaid from './Mermaids.vue';
+import Mermaid from './Mermaid.vue';
 import ECharts from './ECharts.vue';
 
 // 原始完整内容
@@ -31,20 +31,15 @@ pie
 ### 代码块
 
 \`\`\`javascript
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
-import { h, type VNode } from 'vue';
-import MarkdownIt, { type Token } from 'markdown-it';
+const getMarkdownItInstance = (options: Options) => {
+  const markdownParser = MarkdownIt({
+    ...options,
+  })
+    .use(katex)
+    .use(emoji);
+  return markdownParser;
+};
+export default MarkdownRenderer;
 
 \`\`\`
 
@@ -159,19 +154,19 @@ onMounted(() => {
     <!-- Markdown内容渲染 -->
     <div class="markdown-content">
       <renderMarkdown :content="content">
-        <template #javascript="{ lang, rawCode }">
+        <template #code="{ lang, rawCode }">
           <div class="custom-js-code">
             <pre class="code-content" v-html="setCodeStyle(rawCode, lang)"></pre>
           </div>
         </template>
 
         <template #mermaid="{ rawCode }">
-          <Mermaid :code="rawCode" />
+          <Mermaid :content="rawCode" />
         </template>
 
-        <template #echarts="{ rawCode }">
+        <!-- <template #echarts="{ rawCode }">
           <ECharts :code="rawCode" />
-        </template>
+        </template> -->
       </renderMarkdown>
     </div>
   </div>

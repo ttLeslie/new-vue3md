@@ -81,7 +81,6 @@ onUnmounted(() => {
 
 <template>
   <div class="echarts-wrap">
-    <span class="echarts-titlt">这是我自己定义的 echarts 组件</span>
     <div
       ref="refEle"
       :style="{
