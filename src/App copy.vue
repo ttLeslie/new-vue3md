@@ -4,10 +4,62 @@ import { ref, onMounted } from 'vue';
 import { SUPPORTED_LANGUAGES } from './md/utils';
 import renderMarkdown from './md/index';
 import Mermaid from './Mermaid.vue';
+import ECharts from './ECharts.vue';
+import LocalVue from './LocalVues.vue'
 
 // 原始完整内容
 const fullContent = `
+# 一级标题
+## 二级标题
+### 三级标题
+#### 四级标题
+##### 五级标题
+###### 六级标题
 
+**这是粗体文本**
+__这也是粗体文本__
+
+*这是斜体文本*
+_这也是斜体文本_
+
+***这是粗斜体文本***
+
+~~这是带删除线的文本~~
+
+- 无序列表项1
+- 无序列表项2
+  - 子列表项2.1
+  - 子列表项2.2
+
+1. 有序列表项1
+2. 有序列表项2
+  1. 子列表项2.1
+  2. 子列表项2.2
+
+[Element-Plus-X](https://element-plus-x.com "Element-Plus-X")
+
+![示例图片](https://element-plus-x.com/logo.png "一张示例图")
+
+>这是一段引用文本
+>
+>> 这是嵌套的引用文本
+
+---
+
+| 姓名 | 年龄 | 职业 |
+| ---- | ---- | ---- |
+| 张三 | 25   | 工程师 |
+| 李四 | 30   | 设计师 |
+
+### 行内代码
+
+用 \`ElmentPlusX\` 表示 行内块代码用 \`\` 语句
+
+### 代码块
+
+\`\`\`javascript
+const code = "Element-Plus-X";
+\`\`\`
 
 ### 行内公式
 $e^{i\\pi} + 1 = 0$
@@ -33,7 +85,7 @@ pie
 \`\`\`localvue
 \`\`\`
 
-![示例图片](https://element-plus-x.com/logo.png "一张示例图")
+
 
 `;
 
@@ -93,7 +145,7 @@ const restartTyping = () => {
 
 // 代码样式处理
 const setCodeStyle = (rawCode: string, lang: string) => {
-  if (rawCode.trim() === '') return rawCode;
+  if(rawCode.trim() === '') return rawCode;
   // 检查是否为特殊处理的语言
   if (['mermaid', 'echarts', 'localvue'].includes(lang)) return rawCode;
   // 检查是否为支持的语言，否则使用plaintext
@@ -128,7 +180,7 @@ onMounted(() => {
       <renderMarkdown :content="content">
         <template #code="{ lang, rawCode }">
           <div class="custom-js-code" v-if="rawCode !== ''">
-            <pre class="code-content" v-html="setCodeStyle(rawCode, lang)"></pre>
+            <pre class="code-content"  v-html="setCodeStyle(rawCode, lang)"></pre>
           </div>
         </template>
 
@@ -136,14 +188,10 @@ onMounted(() => {
           <Mermaid :content="rawCode" />
         </template>
 
-        <template #localvue="{ rawCode }">
-          <div class="local-vue-component">你好</div>
-        </template>
 
-        <template #image="{ src, alt, title }">
-          <div class="custom-image-container">
-            <img :src="src" :alt="alt" :title="title" class="custom-image" />
-            <span class="image-caption">{{ title }}</span>
+        <template #localvue="{ rawCode }">
+          <div class="local-vue-component">
+            你好
           </div>
         </template>
 

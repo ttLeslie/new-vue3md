@@ -5,14 +5,9 @@ export const getCompontentTree = (
   initialMarkdown: string,
   markdownParser: MarkdownIt,
 ): RendererToken[] => {
-  try {
-    const tokens = markdownParser.parse(initialMarkdown, {});
+  const tokens = markdownParser.parse(initialMarkdown, {});
 
-    return tokensToCompontentTree(tokens);
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    return [];
-  }
+  return tokensToCompontentTree(tokens);
 };
 
 export function tokensToCompontentTree(

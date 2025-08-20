@@ -226,3 +226,17 @@ const SUPPORTED_LANGUAGES = [
   'swift',
   'zig',
 ];
+
+export const isImageNode = (vnode: VNode): boolean => {
+  return !!(vnode.props && vnode.props['data-type'] === 'image');
+};
+
+export const getImageInfo = (vnode: VNode) => {
+  if (!vnode.props) return null;
+
+  return {
+    src: vnode.props['data-src'] as string,
+    alt: vnode.props['data-alt'] as string,
+    title: vnode.props['data-title'] as string,
+  };
+};
