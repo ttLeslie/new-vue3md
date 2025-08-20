@@ -7,8 +7,6 @@ import Mermaid from './Mermaid.vue';
 
 // 原始完整内容
 const fullContent = `
-
-
 ### 行内公式
 $e^{i\\pi} + 1 = 0$
 
@@ -126,30 +124,85 @@ onMounted(() => {
     <!-- Markdown内容渲染 -->
     <div class="markdown-content">
       <renderMarkdown :content="content">
-        <template #code="{ lang, rawCode }">
-          <div class="custom-js-code" v-if="rawCode !== ''">
-            <pre class="code-content" v-html="setCodeStyle(rawCode, lang)"></pre>
-          </div>
-        </template>
-
+        <!-- 1. 代码块相关插槽 -->
+        <!-- 1.1 特定语言的代码块插槽（动态，如mermaid、javascript、vue等） -->
         <template #mermaid="{ rawCode }">
           <Mermaid :content="rawCode" />
+          <!-- 示例：渲染mermaid流程图 -->
         </template>
-
+        <template #javascript="{ lang, rawCode }">
+          <div class="js-code">
+            <pre><code class="language-js">{{ rawCode }}</code></pre>
+          </div>
+        </template>
         <template #localvue="{ rawCode }">
-          <div class="local-vue-component">你好</div>
-        </template>
-
-        <template #image="{ src, alt, title }">
-          <div class="custom-image-container">
-            <img :src="src" :alt="alt" :title="title" class="custom-image" />
-            <span class="image-caption">{{ title }}</span>
+          <!-- 自定义lang=localvue的代码块 -->
+          <div class="local-vue">
+            <p>自定义Vue组件代码：</p>
+            <pre>{{ rawCode }}</pre>
           </div>
         </template>
 
-        <!-- <template #echarts="{ rawCode }">
-          <ECharts :code="rawCode" />
-        </template> -->
+        <!-- 1.2 通用代码块插槽（所有未匹配特定语言的代码块会走这里） -->
+        <template #code="{ lang, rawCode }">
+          <div class="default-code">
+            <p>语言：{{ lang }}</p>
+            <pre>{{ rawCode }}</pre>
+          </div>
+        </template>
+
+        <!-- 2. 文本相关插槽 -->
+        <!-- 2.1 普通文本插槽 -->
+        <template #text="{ content }">
+          <span class="custom-text" style="color: blue">{{ content }}</span>
+        </template>
+
+        <!-- 2.2 表情符号插槽 -->
+        <template #emoji="{ content }">
+          <span class="custom-emoji" style="font-size: 1.2em">{{ content }}</span>
+        </template>
+
+        <!-- 3. 图片插槽 -->
+        <template #image="{ src, alt, title }">
+          <div class="custom-image-wrapper">
+            <img
+              :src="src"
+              :alt="alt"
+              :title="title"
+              class="custom-img"
+              style="border: 2px solid #ccc"
+            />
+            <p class="img-desc">{{ alt || title }}</p>
+          </div>
+        </template>
+
+        <!-- 4. HTML块插槽 -->
+        <template #htmlBlock="{ content }">
+          <div class="custom-html">
+            <p>自定义HTML块：</p>
+            <div v-html="content"></div>
+          </div>
+        </template>
+
+        <!-- 5. 行内代码插槽 -->
+        <template #codeInline="{ content }">
+          <code class="custom-code-inline" style="background: #f5f5f5; padding: 2px 4px">{{
+            content
+          }}</code>
+        </template>
+
+        <!-- 6. 数学公式插槽 -->
+        <!-- 6.1 行内数学公式 -->
+        <template #mathInline="{ content }">
+          <span class="custom-math-inline"> 公式：{{ content }} </span>
+        </template>
+
+        <!-- 6.2 块级数学公式 -->
+        <template #mathBlock="{ content }">
+          <div class="custom-math-block" style="margin: 10px 0; padding: 10px; background: #f9f9f9">
+            块级公式：{{ content }}
+          </div>
+        </template>
       </renderMarkdown>
     </div>
   </div>

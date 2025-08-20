@@ -1,4 +1,4 @@
-import { h, defineComponent, type VNode, type Slots } from 'vue';
+import { h, defineComponent, type VNode } from 'vue';
 import MarkdownIt, { type Options } from 'markdown-it';
 import { katex } from '@mdit/plugin-katex';
 import { full as emoji } from 'markdown-it-emoji';
