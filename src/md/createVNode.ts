@@ -112,7 +112,11 @@ export default function createVNode(
     }
 
     case 'html_block':
-      return h('div', { key: index, innerHTML: (node as ExtendedToken).content || '' });
+      return (
+        handleSlot('htmlBlock', slots, {
+          content: (node as ExtendedToken).content,
+        }) || h('div', { key: index, innerHTML: (node as ExtendedToken).content || '' })
+      );
 
     case 'code_inline':
       return (
