@@ -4,63 +4,9 @@ import { ref, onMounted } from 'vue';
 import { SUPPORTED_LANGUAGES } from './md/utils';
 import renderMarkdown from './md/index';
 import Mermaid from './Mermaid.vue';
-import ECharts from './ECharts.vue';
-import LocalVue from './LocalVues.vue'
 
 // 原始完整内容
 const fullContent = `
-# 一级标题
-## 二级标题
-### 三级标题
-#### 四级标题
-##### 五级标题
-###### 六级标题
-
-**这是粗体文本**
-__这也是粗体文本__
-
-*这是斜体文本*
-_这也是斜体文本_
-
-***这是粗斜体文本***
-
-~~这是带删除线的文本~~
-
-- 无序列表项1
-- 无序列表项2
-  - 子列表项2.1
-  - 子列表项2.2
-
-1. 有序列表项1
-2. 有序列表项2
-  1. 子列表项2.1
-  2. 子列表项2.2
-
-[Element-Plus-X](https://element-plus-x.com "Element-Plus-X")
-
-![示例图片](https://element-plus-x.com/logo.png "一张示例图")
-
->这是一段引用文本
->
->> 这是嵌套的引用文本
-
----
-
-| 姓名 | 年龄 | 职业 |
-| ---- | ---- | ---- |
-| 张三 | 25   | 工程师 |
-| 李四 | 30   | 设计师 |
-
-### 行内代码
-
-用 \`ElmentPlusX\` 表示 行内块代码用 \`\` 语句
-
-### 代码块
-
-\`\`\`javascript
-const code = "Element-Plus-X";
-\`\`\`
-
 ### 行内公式
 $e^{i\\pi} + 1 = 0$
 
@@ -85,7 +31,11 @@ pie
 \`\`\`localvue
 \`\`\`
 
+\`\`\`javascript
+const useAgent = ''
+\`\`\`
 
+![示例图片](https://element-plus-x.com/logo.png "一张示例图")
 
 `;
 
@@ -145,7 +95,7 @@ const restartTyping = () => {
 
 // 代码样式处理
 const setCodeStyle = (rawCode: string, lang: string) => {
-  if(rawCode.trim() === '') return rawCode;
+  if (rawCode.trim() === '') return rawCode;
   // 检查是否为特殊处理的语言
   if (['mermaid', 'echarts', 'localvue'].includes(lang)) return rawCode;
   // 检查是否为支持的语言，否则使用plaintext
@@ -178,26 +128,85 @@ onMounted(() => {
     <!-- Markdown内容渲染 -->
     <div class="markdown-content">
       <renderMarkdown :content="content">
-        <template #code="{ lang, rawCode }">
-          <div class="custom-js-code" v-if="rawCode !== ''">
-            <pre class="code-content"  v-html="setCodeStyle(rawCode, lang)"></pre>
-          </div>
-        </template>
-
+        <!-- 1. 代码块相关插槽 -->
+        <!-- 1.1 特定语言的代码块插槽（动态，如mermaid、javascript、vue等） -->
         <template #mermaid="{ rawCode }">
           <Mermaid :content="rawCode" />
+          <!-- 示例：渲染mermaid流程图 -->
         </template>
-
-
+        <template #javascript="{ lang, rawCode }">
+          <div class="js-code" v-if="rawCode !== ''">
+            <pre><code class="language-js" v-html="setCodeStyle(rawCode, lang)"></code></pre>
+          </div>
+        </template>
         <template #localvue="{ rawCode }">
-          <div class="local-vue-component">
-            你好
+          <!-- 自定义lang=localvue的代码块 -->
+          <div class="local-vue">
+            <p>自定义Vue组件代码：</p>
+            <pre>{{ rawCode }}</pre>
           </div>
         </template>
 
-        <!-- <template #echarts="{ rawCode }">
-          <ECharts :code="rawCode" />
-        </template> -->
+        <!-- 1.2 通用代码块插槽（所有未匹配特定语言的代码块会走这里） -->
+        <template #code="{ lang, rawCode }">
+          <div class="default-code">
+            <p>语言：{{ lang }}</p>
+            <pre>{{ rawCode }}</pre>
+          </div>
+        </template>
+
+        <!-- 2. 文本相关插槽 -->
+        <!-- 2.1 普通文本插槽 -->
+        <template #text="{ content }">
+          <span class="custom-text" style="color: blue">{{ content }}</span>
+        </template>
+
+        <!-- 2.2 表情符号插槽 -->
+        <template #emoji="{ content }">
+          <span class="custom-emoji" style="font-size: 1.2em">{{ content }}</span>
+        </template>
+
+        <!-- 3. 图片插槽 -->
+        <template #image="{ src, alt, title }">
+          <div class="custom-image-wrapper">
+            <img
+              :src="src"
+              :alt="alt"
+              :title="title"
+              class="custom-img"
+              style="border: 2px solid #ccc"
+            />
+            <p class="img-desc">{{ alt || title }}</p>
+          </div>
+        </template>
+
+        <!-- 4. HTML块插槽 -->
+        <template #htmlBlock="{ content }">
+          <div class="custom-html">
+            <p>自定义HTML块：</p>
+            <div v-html="content"></div>
+          </div>
+        </template>
+
+        <!-- 5. 行内代码插槽 -->
+        <template #codeInline="{ content }">
+          <code class="custom-code-inline" style="background: #f5f5f5; padding: 2px 4px">{{
+            content
+          }}</code>
+        </template>
+
+        <!-- 6. 数学公式插槽 -->
+        <!-- 6.1 行内数学公式 -->
+        <template #mathInline="{ content }">
+          <span class="custom-math-inline"> 公式：{{ content }} </span>
+        </template>
+
+        <!-- 6.2 块级数学公式 -->
+        <template #mathBlock="{ content }">
+          <div class="custom-math-block" style="margin: 10px 0; padding: 10px; background: #f9f9f9">
+            块级公式：{{ content }}
+          </div>
+        </template>
       </renderMarkdown>
     </div>
   </div>
