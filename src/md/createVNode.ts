@@ -92,7 +92,7 @@ export default function createVNode(
       const tagNode = node as TagToken;
       let content = tagNode.content || '';
       let tagNames: string = '';
-      const tagAttrs: Array<{ [key: string]: string }> = []; // 存储对应标签的属性
+      const tagAttrs: Array<{ [key: string]: string }> = [];
 
       const inlineTags = [
         'span',
@@ -111,7 +111,6 @@ export default function createVNode(
         'q',
       ];
 
-      // 正则表达式捕获标签名和属性
       const tagPattern = new RegExp(
         `<((${inlineTags.join('|')}))\\b([^>]*?)>(.*?)</\\2>|<((${inlineTags.join('|')}))\\b([^/]*/?)>`,
         'gi',

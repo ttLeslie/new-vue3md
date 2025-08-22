@@ -118,6 +118,7 @@ onMounted(() => {
             attrs,
           }"
         >
+          <span v-if="attrs[0].type.includes('quto')">{{ content }}</span>
         </template>
         <!-- 1. 代码块相关插槽 -->
         <!-- 1.1 特定语言的代码块插槽（动态，如mermaid、javascript、vue等） -->
