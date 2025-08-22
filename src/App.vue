@@ -8,17 +8,34 @@ import Mermaid from './Mermaid.vue';
 // 原始完整内容
 const fullContent = `
 
-<span data-type="quto">这是一个span标签</span>
-
-<p> 这是一个段落 </p>
+子列表项1  <span data-type="quto" data-content="这是自定义的内联vue组件"></span> 子列表项1
 
 `;
+
+// ### emoji
+// :neutral_face:无论是园林的精致、水乡的温婉，还是金鸡湖的现代。
+// :no_mouth:苏州都能让你在三天内感受到 “双面绣” 般的独特魅力。
+// :innocent:愿你在姑苏城的时光，如诗如画，回味无穷！
+
+// ### 自定义组件
+// <span data-type="quto">这是自定义的内联vue组件</span>
+
+// ### 静态段落
+// <p>这是一个静态段落</p>
+
+// ### 无序列表
+// - 列表项1
+//   - 子列表项1  <span data-type="quto" data-content="这是自定义的内联vue组件"></span> 子列表项1
+// - 列表项2
+//   - 子列表项2
+// - 列表项3
+//   - 子列表项3
 
 // 用于展示的内容（打字机效果）
 const content = ref('');
 // 打字机状态
 const isTyping = ref(false);
-const typingSpeed = ref(10); // 打字速度，毫秒/字符
+const typingSpeed = ref(10);
 const currentPosition = ref(0);
 const timer = ref<number | null>(null);
 
@@ -110,94 +127,13 @@ onMounted(() => {
         }"
         :sanitize="true"
       >
-        <template
-          #inline="{
-            originalContent,
-            content,
-            tags, // 标签名数组
-            attrs,
-          }"
-        >
-          <span v-if="attrs[0].type.includes('quto')">{{ content }}</span>
-        </template>
-        <!-- 1. 代码块相关插槽 -->
-        <!-- 1.1 特定语言的代码块插槽（动态，如mermaid、javascript、vue等） -->
-        <template #mermaid="{ rawCode }">
-          <Mermaid :content="rawCode" />
-          <!-- 示例：渲染mermaid流程图 -->
-        </template>
-        <template #javascript="{ lang, rawCode }">
-          <div class="js-code">
-            <pre><code class="language-js">{{ rawCode }}</code></pre>
-          </div>
-        </template>
-        <template #localvue="{ rawCode }">
-          <!-- 自定义lang=localvue的代码块 -->
-          <div class="local-vue">
-            <p>自定义Vue组件代码：</p>
-            <pre>{{ rawCode }}</pre>
-          </div>
-        </template>
-
-        <!-- 1.2 通用代码块插槽（所有未匹配特定语言的代码块会走这里） -->
-        <template #code="{ lang, rawCode }">
-          <div class="default-code">
-            <p>语言：{{ lang }}</p>
-            <pre>{{ rawCode }}</pre>
-          </div>
-        </template>
-
-        <!-- 2. 文本相关插槽 -->
-        <!-- 2.1 普通文本插槽 -->
-        <template #text="{ content }">
-          <span class="custom-text" style="color: blue">{{ content }}</span>
-        </template>
-
-        <!-- 2.2 表情符号插槽 -->
-        <template #emoji="{ content }">
-          <span class="custom-emoji" style="font-size: 1.2em">{{ content }}</span>
-        </template>
-
-        <!-- 3. 图片插槽 -->
-        <template #image="{ src, alt, title }">
-          <div class="custom-image-wrapper">
-            <img
-              :src="src"
-              :alt="alt"
-              :title="title"
-              class="custom-img"
-              style="border: 2px solid #ccc"
-            />
-            <p class="img-desc">{{ alt || title }}</p>
-          </div>
-        </template>
-
-        <!-- 4. HTML块插槽 -->
-        <!-- <template #htmlBlock="{ content }">
-          <div class="custom-html">
-            <p>自定义HTML块：</p>
-            <div v-html="content"></div>
-          </div>
-        </template> -->
-
-        <!-- 5. 行内代码插槽 -->
-        <template #codeInline="{ content }">
-          <code class="custom-code-inline" style="background: #f5f5f5; padding: 2px 4px">{{
-            content
-          }}</code>
-        </template>
-
-        <!-- 6. 数学公式插槽 -->
-        <!-- 6.1 行内数学公式 -->
-        <template #mathInline="{ content }">
-          <span class="custom-math-inline"> 公式：{{ content }} </span>
-        </template>
-
-        <!-- 6.2 块级数学公式 -->
-        <template #mathBlock="{ content }">
-          <div class="custom-math-block" style="margin: 10px 0; padding: 10px; background: #f9f9f9">
-            块级公式：{{ content }}
-          </div>
+        <template #inline="{ originalContent, content, tags, attrs }">
+          <span>
+            {{ content }}
+            <span v-if="tags === 'span'" style="background-color: aliceblue">{{
+              attrs[0].content
+            }}</span>
+          </span>
         </template>
       </renderMarkdown>
     </div>

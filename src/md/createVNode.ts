@@ -89,6 +89,30 @@ export default function createVNode(
       return h('br', { key: index });
 
     case 'inline': {
+      const children = processChildren((node as TagToken).children, mdIt, slots, sanitize);
+      return h(Fragment, { key: index }, children);
+    }
+
+    case 'image': {
+      const imgNode = node as ExtendedToken;
+
+      return (
+        handleSlot('image', slots, {
+          src: getAttribute(imgNode, 'src'),
+          alt: getAttribute(imgNode, 'alt'),
+          title: getAttribute(imgNode, 'title'),
+        }) ||
+        h('img', {
+          key: index,
+          class: 'markdown-image',
+          src: getAttribute(imgNode, 'src'),
+          alt: getAttribute(imgNode, 'alt'),
+          title: getAttribute(imgNode, 'title'),
+        })
+      );
+    }
+
+    case 'html_inline':
       const tagNode = node as TagToken;
       let content = tagNode.content || '';
       let tagNames: string = '';
@@ -147,35 +171,16 @@ export default function createVNode(
         attrs: tagAttrs,
       };
 
-      if (tagNode.content) {
+      console.log('slotParams', slotParams);
+
+      if (tagNames && tagNode.content) {
         const slotResult = handleSlot('inline', slots, slotParams);
         if (slotResult) {
           return slotResult;
         }
+      } else {
+        return '';
       }
-
-      const children = processChildren((node as TagToken).children, mdIt, slots, sanitize);
-      return h(Fragment, { key: index }, children);
-    }
-
-    case 'image': {
-      const imgNode = node as ExtendedToken;
-
-      return (
-        handleSlot('image', slots, {
-          src: getAttribute(imgNode, 'src'),
-          alt: getAttribute(imgNode, 'alt'),
-          title: getAttribute(imgNode, 'title'),
-        }) ||
-        h('img', {
-          key: index,
-          class: 'markdown-image',
-          src: getAttribute(imgNode, 'src'),
-          alt: getAttribute(imgNode, 'alt'),
-          title: getAttribute(imgNode, 'title'),
-        })
-      );
-    }
 
     case 'html_block':
       if (sanitize) {
@@ -210,6 +215,7 @@ export default function createVNode(
           innerHTML: (node as ExtendedToken).content || '',
         })
       );
+
     case 'code_inline':
       return (
         handleSlot('codeInline', slots, {
