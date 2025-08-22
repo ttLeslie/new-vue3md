@@ -22,6 +22,8 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@mdit/plugin-sup": "^0.22.1",
+    "dompurify": "^3.2.6",
     "echarts": "^6.0.0",
     "es-toolkit": "^1.39.9",
     "github-markdown-css": "^5.8.1",

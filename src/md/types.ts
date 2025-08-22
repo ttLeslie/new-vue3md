@@ -17,6 +17,7 @@ export interface TagToken {
   close?: ExtendedToken;
   children: RendererToken[];
   ComponentType: string;
+  content?: string;
 }
 
 /**
