@@ -24,6 +24,7 @@
   "dependencies": {
     "echarts": "^6.0.0",
     "es-toolkit": "^1.39.9",
+    "github-markdown-css": "^5.8.1",
     "highlight.js": "^11.11.1",
     "markdown-it": "^14.1.0",
     "markdown-it-emoji": "^3.0.0",
@@ -57,6 +58,7 @@
     "less": "^4.4.0",
     "npm-run-all2": "^8.0.4",
     "oxlint": "~1.8.0",
+    "postcss": "^8.5.6",
     "prettier": "3.6.2",
     "start-server-and-test": "^2.0.12",
     "typescript": "~5.8.0",
