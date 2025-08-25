@@ -8,7 +8,11 @@ import Mermaid from './Mermaid.vue';
 // 原始完整内容
 const fullContent = `
 
+### 行内公式
+$E=mc^2$ Euler’s identity $e^{i\pi}+1=0$ is a beautiful formula in $\mathbb{R}^2$.
+
 地铁 6 号线串联虎丘、拙政园、平江路等景点，建议优先使用<span data-type="quote" data-title="苏州市人民政府" data-content="“五一”假期，古城旅游交通出行攻略"> </span> 。
+
 
 `;
 

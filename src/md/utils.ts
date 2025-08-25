@@ -39,8 +39,10 @@ export const unescapeHtml = (str: string): string => {
 };
 
 export const stripOuterPTag = (html: string): string => {
-  let processed = html.replace(/^<p\b[^>]*>/i, '');
-  processed = processed.replace(/<\/p\s*>$/i, '');
+  // 移除开头的p标签，允许标签前后有空白字符
+  let processed = html.replace(/^\s*<p\b[^>]*>\s*/i, '');
+  // 移除结尾的/p标签，允许标签前后有空白字符
+  processed = processed.replace(/\s*<\/p\s*>\s*$/i, '');
   return processed.trim();
 };
 

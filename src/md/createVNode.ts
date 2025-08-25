@@ -96,17 +96,23 @@ export default function createVNode(
     case 'image': {
       const imgNode = node as ExtendedToken;
 
+      console.log('imgNode', {
+        src: getAttribute(imgNode, 'src'),
+        alt: getAttribute(imgNode, 'alt') || node.content,
+        title: getAttribute(imgNode, 'title'),
+      });
+
       return (
         handleSlot('image', slots, {
           src: getAttribute(imgNode, 'src'),
-          alt: getAttribute(imgNode, 'alt'),
+          alt: getAttribute(imgNode, 'alt') || node.content,
           title: getAttribute(imgNode, 'title'),
         }) ||
         h('img', {
           key: index,
           class: 'markdown-image',
           src: getAttribute(imgNode, 'src'),
-          alt: getAttribute(imgNode, 'alt'),
+          alt: getAttribute(imgNode, 'alt') || node.content,
           title: getAttribute(imgNode, 'title'),
         })
       );
@@ -257,31 +263,30 @@ export default function createVNode(
       );
     }
 
-    case 'math_block':
+    case 'math_block': {
       const blockFormula = (node as ExtendedToken).content || '';
-      {
-        const blockHtml = mdIt.render(
-          `${(node as ExtendedToken).markup}${blockFormula}${(node as ExtendedToken).markup}`,
-        );
+      const blockHtml = mdIt.render(
+        `${(node as ExtendedToken).markup}${blockFormula}${(node as ExtendedToken).markup}`,
+      );
 
-        if (blockHtml.includes('katex-error')) {
-          return h('div', {
-            key: index,
-            class: 'math-default-block',
-          });
-        }
-
-        return (
-          handleSlot('mathBlock', slots, {
-            content: (node as ExtendedToken).content,
-          }) ||
-          h('div', {
-            key: index,
-            class: 'math-block',
-            innerHTML: blockHtml,
-          })
-        );
+      if (blockHtml.includes('katex-error')) {
+        return h('div', {
+          key: index,
+          class: 'math-default-block',
+        });
       }
+
+      return (
+        handleSlot('mathBlock', slots, {
+          content: (node as ExtendedToken).content,
+        }) ||
+        h('div', {
+          key: index,
+          class: 'math-block',
+          innerHTML: blockHtml,
+        })
+      );
+    }
 
     case 'default': {
       const tagNode = node as TagToken;
