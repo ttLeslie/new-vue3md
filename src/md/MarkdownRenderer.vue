@@ -2,7 +2,6 @@
 import { type VNode, defineComponent, h } from 'vue';
 import MarkdownIt, { type Options } from 'markdown-it';
 import { katex } from '@mdit/plugin-katex';
-import { sup } from '@mdit/plugin-sup';
 import { full as emoji } from 'markdown-it-emoji';
 import { getCompontentTree } from './tokens-to-tree';
 import createVNode from './createVNode';
@@ -66,8 +65,7 @@ const getMarkdownItInstance = (options: Options) => {
     ...options,
   })
     .use(katex)
-    .use(emoji)
-    .use(sup);
+    .use(emoji);
   return markdownParser;
 };
 export default MarkdownRenderer;

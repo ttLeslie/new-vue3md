@@ -112,7 +112,7 @@ export default function createVNode(
       );
     }
 
-    case 'html_inline':
+    case 'html_inline': {
       const tagNode = node as TagToken;
       let content = tagNode.content || '';
       let tagNames: string = '';
@@ -171,18 +171,19 @@ export default function createVNode(
         attrs: tagAttrs,
       };
 
-      console.log('slotParams', slotParams);
-
       if (tagNames && tagNode.content) {
-        const slotResult = handleSlot('inline', slots, slotParams);
+        const slotResult = handleSlot('htmlInline', slots, slotParams);
         if (slotResult) {
           return slotResult;
+        } else {
+          return '';
         }
       } else {
         return '';
       }
+    }
 
-    case 'html_block':
+    case 'html_block': {
       if (sanitize) {
         const sanitizeHtml = async (html: string) => {
           try {
@@ -194,12 +195,13 @@ export default function createVNode(
           }
         };
         const content = (node as ExtendedToken).content || '';
+
         return (
           handleSlot('htmlBlock', slots, { content }) ||
           h(
             defineAsyncComponent(() =>
               sanitizeHtml(content).then((purifiedHtml) =>
-                h('div', { key: index, innerHTML: purifiedHtml }),
+                h('div', { key: index, innerHTML: purifiedHtml, class: 'markdown-html-block' }),
               ),
             ),
           )
@@ -212,9 +214,11 @@ export default function createVNode(
         }) ||
         h('div', {
           key: index,
+          class: 'markdown-html-block',
           innerHTML: (node as ExtendedToken).content || '',
         })
       );
+    }
 
     case 'code_inline':
       return (
@@ -228,7 +232,7 @@ export default function createVNode(
         })
       );
 
-    case 'math_inline':
+    case 'math_inline': {
       const formula = (node as ExtendedToken).content || '';
       const html = mdIt.render(
         `${(node as ExtendedToken).markup}${formula}${(node as ExtendedToken).markup}`,
@@ -251,30 +255,33 @@ export default function createVNode(
           innerHTML: stripOuterPTag(html),
         })
       );
+    }
 
     case 'math_block':
       const blockFormula = (node as ExtendedToken).content || '';
-      const blockHtml = mdIt.render(
-        `${(node as ExtendedToken).markup}${blockFormula}${(node as ExtendedToken).markup}`,
-      );
+      {
+        const blockHtml = mdIt.render(
+          `${(node as ExtendedToken).markup}${blockFormula}${(node as ExtendedToken).markup}`,
+        );
 
-      if (blockHtml.includes('katex-error')) {
-        return h('div', {
-          key: index,
-          class: 'math-default-block',
-        });
+        if (blockHtml.includes('katex-error')) {
+          return h('div', {
+            key: index,
+            class: 'math-default-block',
+          });
+        }
+
+        return (
+          handleSlot('mathBlock', slots, {
+            content: (node as ExtendedToken).content,
+          }) ||
+          h('div', {
+            key: index,
+            class: 'math-block',
+            innerHTML: blockHtml,
+          })
+        );
       }
-
-      return (
-        handleSlot('mathBlock', slots, {
-          content: (node as ExtendedToken).content,
-        }) ||
-        h('div', {
-          key: index,
-          class: 'math-block',
-          innerHTML: blockHtml,
-        })
-      );
 
     case 'default': {
       const tagNode = node as TagToken;

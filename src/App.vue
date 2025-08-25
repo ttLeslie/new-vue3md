@@ -8,7 +8,7 @@ import Mermaid from './Mermaid.vue';
 // 原始完整内容
 const fullContent = `
 
-子列表项1  <span data-type="quto" data-content="这是自定义的内联vue组件"></span> 子列表项1
+地铁 6 号线串联虎丘、拙政园、平江路等景点，建议优先使用<span data-type="quote" data-title="苏州市人民政府" data-content="“五一”假期，古城旅游交通出行攻略"> </span> 。
 
 `;
 
@@ -127,12 +127,19 @@ onMounted(() => {
         }"
         :sanitize="true"
       >
-        <template #inline="{ originalContent, content, tags, attrs }">
+        <template #htmlInline="{ originalContent, content, tags, attrs }">
           <span>
-            {{ content }}
-            <span v-if="tags === 'span'" style="background-color: aliceblue">{{
-              attrs[0].content
-            }}</span>
+            <span
+              v-if="tags === 'span' && attrs[0].type === 'quote'"
+              style="
+                background-color: #0000000f;
+                color: #00000080;
+                padding: 0.2rem 0.4rem;
+                border-radius: 4px;
+                font-size: 10px;
+              "
+              >{{ attrs[0].title }}</span
+            >
           </span>
         </template>
       </renderMarkdown>
